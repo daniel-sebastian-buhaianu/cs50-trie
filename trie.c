@@ -1,7 +1,6 @@
 // Saves popular dog names in a trie
 // https://www.dailypaws.com/dogs-puppies/dog-names/common-dog-names
 
-#include <cs50.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -89,28 +88,43 @@ int main(int argc, char *argv[])
         cursor->is_word = true;
     }
 
-    if (check(get_string("Check word: ")))
-    {
-        printf("Found!\n");
-    }
-    else
-    {
-        printf("Not Found.\n");
-    }
+	// get input from user
+	char word[MAXCHAR + 1];
+	printf("Check word: ");
+	scanf("%s", word);
 
-    if (!unload())
-    {
-        printf("Problem freeing memory!\n");
-        return 1;
-    }
+    	if (check(word))
+    	{
+       		printf("Found!\n");
+    	}
+    	else
+    	{
+        	printf("Not Found.\n");
+    	}
 
-    fclose(infile);
+    	if (!unload())
+    	{
+        	printf("Problem freeing memory!\n");
+        	return 1;
+    	}
+
+    	fclose(infile);
 }
 
-// TODO: Complete the check function, return true if found, false if not found
+// check if word is in dog name list
 bool check(char* word)
 {
-    return false;
+	node *ptr = root;
+	for (int i = 0, n = strlen(word); i < n; i++)
+	{
+		int index = word[i] - 'a';
+		if (ptr->children[index] == NULL)
+		{
+			return false;
+		}
+		ptr = ptr->children[index];
+	}
+	return ptr->is_word;
 }
 
 // Unload trie from memory
@@ -125,7 +139,7 @@ bool unload(void)
 
 void unloader(node* current)
 {
-    
+
     // Iterate over all the children to see if they point to anything and go
     // there if they do point
     for (int i = 0; i < SIZE_OF_ALPHABET; i++)
